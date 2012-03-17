@@ -1,4 +1,20 @@
-package org.spoutcraft.spoutcraftapi.material;
+/*
+ * This file is part of SpoutPluginAPI (http://www.spout.org/).
+ *
+ * SpoutPluginAPI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SpoutPluginAPI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.getspout.spoutapi.material;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -7,28 +23,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.spoutcraft.spoutcraftapi.material.block.Air;
-import org.spoutcraft.spoutcraftapi.material.block.DoubleSlabs;
-import org.spoutcraft.spoutcraftapi.material.block.GenericLiquid;
-import org.spoutcraft.spoutcraftapi.material.block.Grass;
-import org.spoutcraft.spoutcraftapi.material.block.LongGrass;
-import org.spoutcraft.spoutcraftapi.material.block.Sapling;
-import org.spoutcraft.spoutcraftapi.material.block.Slab;
-import org.spoutcraft.spoutcraftapi.material.block.Solid;
-import org.spoutcraft.spoutcraftapi.material.block.StoneBricks;
-import org.spoutcraft.spoutcraftapi.material.block.Tree;
-import org.spoutcraft.spoutcraftapi.material.block.Wool;
-import org.spoutcraft.spoutcraftapi.material.item.Coal;
-import org.spoutcraft.spoutcraftapi.material.item.Potion;
-import org.spoutcraft.spoutcraftapi.material.item.Dye;
-import org.spoutcraft.spoutcraftapi.material.item.GenericArmor;
-import org.spoutcraft.spoutcraftapi.material.item.GenericFood;
-import org.spoutcraft.spoutcraftapi.material.item.GenericItem;
-import org.spoutcraft.spoutcraftapi.material.item.GenericTool;
-import org.spoutcraft.spoutcraftapi.material.item.GenericWeapon;
-import org.spoutcraft.spoutcraftapi.material.item.SpawnEgg;
-
 import gnu.trove.map.hash.TIntObjectHashMap;
+
+import org.getspout.spoutapi.material.block.*;
+import org.getspout.spoutapi.material.item.*;
 
 public class MaterialData {
 	private final static Object[] idLookup = new Object[3200];
@@ -507,8 +505,7 @@ public class MaterialData {
 			nameLookup.put(mat.getNotchianName().toLowerCase(), mat);
 			if (idLookup[mat.getRawId()] == null) {
 				idLookup[mat.getRawId()] = mat;
-			}
-			else if (idLookup[mat.getRawId()] instanceof Material[]) {
+			} else if (idLookup[mat.getRawId()] instanceof Material[]) {
 				Material[] multiple = (Material[])idLookup[mat.getRawId()];
 				int size = mat.getRawData() * 2 + 1;
 				if (multiple.length < size) {
@@ -516,20 +513,17 @@ public class MaterialData {
 				}
 				multiple[mat.getRawData()] =  mat;
 				idLookup[mat.getRawId()] = multiple;
-			}
-			else if (idLookup[mat.getRawId()] instanceof Material) {
+			} else if (idLookup[mat.getRawId()] instanceof Material) {
 				Material existing = (Material) idLookup[mat.getRawId()];
 				int size = Math.max(existing.getRawData(), mat.getRawData()) * 2 + 1;
 				Material[] multiple = new Material[size];
 				multiple[existing.getRawData()] = existing;
 				multiple[mat.getRawData()] = mat;
 				idLookup[mat.getRawId()] = multiple;
-			}
-			else {
+			} else {
 				System.out.println("WARNING! Unknown lookup contents, " + idLookup[mat.getRawId()]);
 			}
-		}
-		else {
+		} else {
 			System.out.println("WARNING! Material " + mat.getNotchianName() + " Could Not Fit " + id + ", " + data + " into the lookup array!");
 		}
 	}
@@ -581,7 +575,7 @@ public class MaterialData {
 	 */
 	public static Material getMaterial(int id, short data) {
 		Object o = idLookup[id];
-		if (id == FLINT_ID && data >= 1024){
+		if (id == FLINT_ID && data >= 1024) {
 			o = getCustomBlock(data);
 			if (o == null) {
 				o = getCustomItem(data);
@@ -617,11 +611,10 @@ public class MaterialData {
 			mat = (Material)o;
 			materials = new Material[Math.max(mat.getRawData(), data) *2 + 1];
 			materials[mat.getRawData()] = mat;
-		}
-		else {
+		} else {
 			materials = (Material[])o;
 			if (data > materials.length) {
-				materials = adjust(materials, data * 2 + 1);
+				materials = adjust(materials, data* 2 + 1);
 			}
 			mat = materials[data];
 		}
@@ -638,8 +631,7 @@ public class MaterialData {
 				constructor.setAccessible(true);
 				mat = constructor.newInstance(orig.getName(), id, data);
 				insertItem(id, data, mat);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				System.out.println("[Spoutcraft] Failed to create a duplicate item in MaterialData.getOrCreateMaterial, for " + id + ", " + data);
 			}
 			return mat;
@@ -744,11 +736,11 @@ public class MaterialData {
 		for (int i = 0; i < idLookup.length; i++) {
 			if (idLookup[i] instanceof Material) {
 				materials.add((Material)idLookup[i]);
-			}
-			else if (idLookup[i] instanceof Material[]) {
+			} else if (idLookup[i] instanceof Material[]) {
 				for (Material mat : ((Material[])idLookup[i])) {
-					if (mat != null)
+					if (mat != null) {
 						materials.add(mat);
+					}
 				}
 			}
 		}
